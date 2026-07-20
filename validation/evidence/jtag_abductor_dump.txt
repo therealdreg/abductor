@@ -1,0 +1,42 @@
+FULL JTAG (not just SWD) of the CW312T-SAM4S THROUGH the Abductor on the CW308 UFO.
+Chain: Husky Plus MPSSE -> CW308 UFO -> Abductor -> CW312T-SAM4S.
+This adds the two remaining debug data lines JTAG_TDI and JTAG_TDO on top of the SWD result,
+so it exercises MOSI and MISO as well.
+
+Non-DIO MPSSE (enable_MPSSE(1)); the Husky drives JTAG on the main 20-pin SPI/PDI pins.
+Bridge on the CW308 UFO (6 wires): SWD 4 wires + 2 more for TDI/TDO:
+  UFO SCK   -> J8 J_TCK   (JTAG_TCK)
+  UFO PDID  -> J8 J_TMS   (JTAG_TMS)
+  UFO MOSI  -> J8 J_TDI   (JTAG_TDI)   <- added for full JTAG
+  UFO MISO  -> J8 J_TDO   (JTAG_TDO)   <- added for full JTAG
+  UFO nRST  -> J8 nRST    (JTAG_nRST)
+  UFO VREF  -> J8 J_UREF  (JTAG_VREF)
+Husky Plus USB PID 0xace6. Transport: JTAG @ 200 kHz. OpenOCD 0.12.0.
+
+Info : JTAG tap: sam4.cpu tap/device found: 0x4ba00477 (mfg: 0x23b (ARM Ltd), part: 0xba00, ver: 0x4)
+Info : [sam4.cpu] Cortex-M4 r0p1 processor detected
+Info : [sam4.cpu] target has 6 breakpoints, 4 watchpoints
+
+--- JTAG scan chain ---
+   TapName             Enabled  IdCode     Expected   IrLen IrCap IrMask
+-- ------------------- -------- ---------- ---------- ----- ----- ------
+ 0 sam4.cpu               Y     0x4ba00477 0x4ba00477     4 0x01  0x0f
+   ^ TAP IDCODE parallel-loaded in Capture-DR and shifted out on TDO (confirms TDO); TDI is exercised by the halt, flash and register reads below; matches expected.
+
+[sam4.cpu] halted due to debug-request, current mode: Thread
+xPSR: 0x01000000 pc: 0x0040061c msp: 0x200011a8
+
+--- SAM4S CHIPID_CIDR @0x400E0740 ---
+0x400e0740: 288b07e1
+
+--- FLASH @0x00400000 (firmware vector table) ---
+0x00400000: 200011a8 0040061d 00400619 00400619 00400619 00400619 00400619 00000000
+
+--- CPU pc ---
+pc = 0x0040061c
+
+RESULT: full JTAG works through the Abductor. The IDCODE read confirms JTAG_TDO (MISO); the halt, flash and
+register reads that follow confirm JTAG_TDI (MOSI), on top of the SWD-validated TMS/TCK/nRST/VREF.
+Note: JTAG TAP IDCODE 0x4ba00477 differs from the SWD DP IDR 0x2ba01477, as expected (TAP IDCODE vs
+SW-DP IDR); both identify the ARM Cortex-M4 debug port. The CW312T-SAM4S is NOT SWD-only; full JTAG
+(TMS, TCK, TDI, TDO) passes through the adapter.
