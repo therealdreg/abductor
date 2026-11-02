@@ -1,0 +1,38 @@
+=== enable Husky MPSSE (non-DIO) ===
+MPSSE ON
+=== OpenOCD JTAG: scan chain (TAP IDCODE) + halt + read ===
+Open On-Chip Debugger 0.12.0
+Licensed under GNU GPL v2
+For bug reports, read
+	http://openocd.org/doc/doxygen/bugs.html
+none separate
+
+jtag
+adapter speed: 200 kHz
+
+Info : clock speed 200 kHz
+Info : JTAG tap: sam4.cpu tap/device found: 0x4ba00477 (mfg: 0x23b (ARM Ltd), part: 0xba00, ver: 0x4)
+Info : [sam4.cpu] Cortex-M4 r0p1 processor detected
+Info : [sam4.cpu] target has 6 breakpoints, 4 watchpoints
+Info : starting gdb server for sam4.cpu on 3333
+Info : Listening on port 3333 for gdb connections
+--- JTAG scan chain ---
+   TapName             Enabled  IdCode     Expected   IrLen IrCap IrMask
+-- ------------------- -------- ---------- ---------- ----- ----- ------
+ 0 sam4.cpu               Y     0x4ba00477 0x4ba00477     4 0x01  0x0f
+
+Info : JTAG tap: sam4.cpu tap/device found: 0x4ba00477 (mfg: 0x23b (ARM Ltd), part: 0xba00, ver: 0x4)
+[sam4.cpu] halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x00400180 msp: 0x20001020
+--- SAM4S CHIPID_CIDR @0x400E0740 ---
+0x400e0740: 288b07e1 
+
+--- FLASH @0x00400000 ---
+0x00400000: 20001020 00400181 0040017d 0040017d 0040017d 0040017d 0040017d 00000000 
+
+--- CPU pc ---
+pc (/32): 0x00400180
+
+shutdown command invoked
+=== disable MPSSE ===
+MPSSE OFF

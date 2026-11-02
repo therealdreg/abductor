@@ -1,0 +1,21 @@
+DFA (phoenixAES) on iCE40UP5K hardware AES via [ra]  (phoenixAES 0.0.5)
+golden ct (PT0=00..0f) = 50fe67cc996d32b6da0937e99bafec60   [known-answer OK]
+
+=== DFA collection: round-8 route (primary) + round-9 route (bonus) ===
+[pt 1] 000102030405060708090a0b0c0d0e0f  {'normal': 2409, 'r9': 11, 'r8': 113, 'partial': 66}  r8cand=103 r9faults=7 | key: D014F9A8C9EE2589E13F0CC8B6630CA6
+
+--- round-8 fault evidence (near-fully-corrupted outputs, real hardware via the Right-Angle Abductor) ---
+plaintext 000102030405060708090a0b0c0d0e0f  golden 50fe67cc996d32b6da0937e99bafec60
+    faulty ct 1974e97f1d038d28d2ee61231f712c08
+    faulty ct efe7efe00ec21a359e1b7156949acac0
+    faulty ct 08b12e0fff0df78c1edcef6a510ba035
+    faulty ct 9954fddaaf43000cd4d1b7daf60ee726
+    faulty ct 5ae43950668cd3ebf5ed1fe1533d06e2
+    faulty ct 7a74395cb4bb5b657c65327b719a3446
+
+=== RESULT ===
+recovered round-10 key : d014f9a8c9ee2589e13f0cc8b6630ca6
+recovered master key   : 2b7e151628aed2a6abf7158809cf4f3c
+known     master key   : 2b7e151628aed2a6abf7158809cf4f3c
+DFA MASTER-KEY BYTES CORRECT: 16/16   FULL MATCH: True
+DFA OK

@@ -1,0 +1,13 @@
+=== enable Husky MPSSE (non-DIO SWD) ===
+MPSSE ON
+Info : SWD DPIDR 0x2ba01477
+Info : [sam4.cpu] Cortex-M4 r0p1 processor detected
+[sam4.cpu] halted due to debug-request, current mode: Thread 
+--- SAM4S CHIPID_CIDR @0x400E0740 ---
+0x400e0740: 288b07e1 
+--- SRAM @0x20000000 ---
+--- FLASH @0x00400000 (firmware) ---
+pc (/32): 0x00400180
+sp (/32): 0x20001020
+=== disable MPSSE (restore normal mode) ===
+MPSSE OFF

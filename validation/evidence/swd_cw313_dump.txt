@@ -1,0 +1,41 @@
+=== enable Husky MPSSE (non-DIO SWD) ===
+MPSSE ON
+=== OpenOCD SWD: connect + halt + read ===
+Open On-Chip Debugger 0.12.0
+Licensed under GNU GPL v2
+For bug reports, read
+	http://openocd.org/doc/doxygen/bugs.html
+none separate
+
+Info : FTDI SWD mode enabled
+swd
+adapter speed: 400 kHz
+
+Info : clock speed 400 kHz
+Info : SWD DPIDR 0x2ba01477
+Info : [sam4.cpu] Cortex-M4 r0p1 processor detected
+Info : [sam4.cpu] target has 6 breakpoints, 4 watchpoints
+Info : starting gdb server for sam4.cpu on 3333
+Info : Listening on port 3333 for gdb connections
+[sam4.cpu] halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x00400194 msp: 0x20001020
+--- SAM4S CHIPID_CIDR @0x400E0740 ---
+0x400e0740: 288b07e1 
+
+--- SRAM @0x20000000 ---
+0x20000000: 00b71b00 00000000 00000000 00000000 00000000 00000000 00000000 00000000 
+
+--- FLASH @0x00400000 (firmware) ---
+0x00400000: 20001020 00400195 00400191 00400191 00400191 00400191 00400191 00000000 
+0x00400020: 00000000 00000000 00000000 00400191 00400191 00000000 00400191 00400191 
+
+--- CPU registers ---
+pc (/32): 0x00400194
+
+sp (/32): 0x20001020
+
+xPSR (/32): 0x01000000
+
+shutdown command invoked
+=== disable MPSSE (restore normal mode) ===
+MPSSE OFF

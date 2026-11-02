@@ -1,0 +1,38 @@
+SWD debug of the CW312T-SAM4S THROUGH the Abductor (CW312->CW308 adapter) on the CW308 UFO.
+Chain: Husky Plus MPSSE -> CW308 UFO -> Abductor -> CW312T-SAM4S.
+This exercises the Abductor's JTAG/SWD debug routing (JTAG_TMS / JTAG_TCK).
+
+Setup (non-DIO MPSSE, enable_MPSSE(1)); the Husky drives SWD on the main 20-pin SPI/PDI pins.
+Bridge on the CW308 UFO (4 wires), the same signals JP3 bridges on the CW313:
+  UFO SCK   -> J8 J_TCK  (JTAG_TCK = SWCLK)
+  UFO PDID  -> J8 J_TMS  (JTAG_TMS = SWDIO)
+  UFO VREF  -> J8 J_UREF (JTAG_VREF; powers the 100k JTAG pull-ups, which the UFO does not drive)
+  UFO nRST  -> J8 J_TRST (CW reset line jumpered to the JTAG_TRST pin)
+GND is already common through the main 20-pin ribbon, so no separate ground wire is needed.
+The SAM4S JTAG then reaches the CPU via: J8 -> UFO target socket -> Abductor -> CW312 edge -> SAM4S.
+Husky Plus USB PID 0xace6. Transport: SWD @ 400 kHz. OpenOCD 0.12.0.
+
+Info : SWD DPIDR 0x2ba01477                         <- ARM SW-DP IDCODE, debug port alive THROUGH the Abductor
+Info : [sam4.cpu] Cortex-M4 r0p1 processor detected <- SAM4S core identified over SWD
+Info : [sam4.cpu] target has 6 breakpoints, 4 watchpoints
+[sam4.cpu] halted due to debug-request, current mode: Thread
+xPSR: 0x01000000 pc: 0x0040061c msp: 0x200011a8     <- CPU halted (firmware stopped)
+
+--- SAM4S CHIPID_CIDR @0x400E0740 ---
+0x400e0740: 288b07e1                                <- chip ID read from silicon (ATSAM4S)
+
+--- SRAM @0x20000000 ---
+0x20000000: 00b71b00 00000000 00000000 00000000     <- live SRAM contents
+
+--- FLASH @0x00400000 (firmware vector table) ---
+0x00400000: 200011a8 0040061d 00400619 00400619 00400619 00400619 00400619 00000000
+             ^initial SP  ^reset vector (=pc)   ^exception handlers
+
+--- CPU registers ---
+pc = 0x0040061c
+sp = 0x200011a8   (matches the initial MSP from the vector table)
+
+RESULT: identical to the CW313 reference dump, but obtained THROUGH the Abductor.
+This validates the Abductor's JTAG/SWD debug routing: SWDIO (JTAG_TMS) and SWCLK (JTAG_TCK)
+pass correctly from the CW312 edge to the CW308 socket. Full debug takeover (halt, chip ID,
+SRAM/flash read, core registers) over the adapter.
